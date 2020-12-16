@@ -58,11 +58,15 @@ app.get('/search',(req,res) => {
 });
 
 app.post('/send',function(req,res){
+    // http://knexjs.org/#Builder-insert
     let result;
     const emailSender = req.body;
     if(emailSender.sender && emailSender.recipient && emailSender.subject && emailSender.message){
-       
-        emails.push({ sender: emailSender.sender, recipient: emailSender.recipient, subject: emailSender.subject, email: emailSender.message, })
+        knex('e_mails')
+        .insert({ sender: emailSender.sender, recipient: emailSender.recipient, subject: emailSender.subject, message: emailSender.message})
+        .then((result)=>console.log("result:", result))
+        
+        // emails.push({ sender: emailSender.sender, recipient: emailSender.recipient, subject: emailSender.subject, email: emailSender.message, })
 
         result = {
             "status": "success",
