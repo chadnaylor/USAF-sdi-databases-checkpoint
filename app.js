@@ -5,14 +5,25 @@ const bodyParser = require("body-parser")
 const express = require('express')
 const app = express()
 const port = 3001
-
+const knex = require('knex')(require('./knexfile.js')['development']);
 
 app.use(bodyParser.json())
 
 const emails = JSON.parse(fs.readFileSync("emails.JSON"))
 
 
-app.get('/emails', (req, res) => res.json(emails))
+app.get('/emails', (req, res) => {
+    knex
+        .select('*')
+        .from('e_mails')
+        .then(data => res.status(200).json(data))
+        .catch(err =>
+            res.status(404).json({
+                message:
+                    'The data you are looking for could not be found. Please try again'
+            })
+        );
+})
 app.get('/emails/:id', (req, res) => res.send(emails[req.params.id]))
 
 app.get('/search',(req,res) => {
@@ -44,4 +55,4 @@ app.post('/send',function(req,res){
 });
 
 
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
+app.listen(port, () => console.log(`Coolest app ever listening at http://localhost:${port}`))
