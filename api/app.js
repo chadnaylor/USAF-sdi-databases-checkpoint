@@ -25,54 +25,54 @@ app.get('/emails', (req, res) => {
         );
 })
 app.get('/emails/:id', (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
     knex
-    .select('*')
-    .from('e_mails')
-    .where('id', id)
-    .then(data => res.status(200).json(data))
-    .catch(err =>
-        res.status(404).json({
-            message:
-                'The data you are looking for could not be found. Please try again'
-        })
-    );
+        .select('*')
+        .from('e_mails')
+        .where('id', id)
+        .then(data => res.status(200).json(data))
+        .catch(err =>
+            res.status(404).json({
+                message:
+                    'The data you are looking for could not be found. Please try again'
+            })
+        );
 });
-app.get('/search',(req,res) => {
+app.get('/search', (req, res) => {
     const query = decodeURIComponent(req.query.query)
     const filteredEmails = emails.filter(email => email.subject.includes(query))
-    
+
     knex
-    .select('*')
-    .from('e_mails')
-    .where('subject', 'like', `%${query}%`)
-    .then(data => res.status(200).json(data))
-    .catch(err =>
-        res.status(404).json({
-            message:
-                'The data you are looking for could not be found. Please try again'
-        })
-    );
+        .select('*')
+        .from('e_mails')
+        .where('subject', 'like', `%${query}%`)
+        .then(data => res.status(200).json(data))
+        .catch(err =>
+            res.status(404).json({
+                message:
+                    'The data you are looking for could not be found. Please try again'
+            })
+        );
 
     //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURIComponent
 });
 
-app.post('/send',function(req,res){
+app.post('/send', function (req, res) {
     // http://knexjs.org/#Builder-insert
     let result;
     const emailSender = req.body;
-    if(emailSender.sender && emailSender.recipient && emailSender.subject && emailSender.message){
+    if (emailSender.sender && emailSender.recipient && emailSender.subject && emailSender.message) {
         knex('e_mails')
-        .insert({ sender: emailSender.sender, recipient: emailSender.recipient, subject: emailSender.subject, message: emailSender.message})
-        .then((result)=>console.log("result:", result))
-        
+            .insert({ sender: emailSender.sender, recipient: emailSender.recipient, subject: emailSender.subject, message: emailSender.message })
+            .then((result) => console.log("result:", result))
+
         // emails.push({ sender: emailSender.sender, recipient: emailSender.recipient, subject: emailSender.subject, email: emailSender.message, })
 
         result = {
             "status": "success",
             "message": "The message was successfully sent"
         }
-    }else{ 
+    } else {
         result = {
             "status": "failed",
             "message": "The message was not sent"
